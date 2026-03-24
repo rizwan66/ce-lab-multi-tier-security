@@ -1,0 +1,25 @@
+Security Group: sg-web-tier
+Description: Internet-facing web tier. Accepts public HTTP/HTTPS and bastion SSH. Forwards to app tier on port 8080.
+
+==================================================
+INBOUND RULES
+==================================================
+Type        Protocol  Port  Source          Description
+HTTP        TCP       80    0.0.0.0/0       Public web traffic
+HTTPS       TCP       443   0.0.0.0/0       Public HTTPS traffic
+SSH         TCP       22    sg-bastion      Admin SSH from bastion only
+
+==================================================
+OUTBOUND RULES
+==================================================
+Type        Protocol  Port  Destination     Description
+Custom TCP  TCP       8080  sg-app-tier     Forward requests to app tier
+HTTPS       TCP       443   0.0.0.0/0       Outbound HTTPS (external APIs, updates)
+
+==================================================
+NOTES
+==================================================
+- SSH from 0.0.0.0/0 is intentionally NOT allowed (only via bastion)
+- Port 3306 (MySQL) is intentionally NOT in outbound rules
+- The web tier should only serve as a reverse proxy; business logic lives in the app tier
+- In production, consider a WAF in front of this tier

@@ -1,0 +1,24 @@
+Security Group: sg-app-tier
+Description: Application logic tier. Only accepts traffic from the web tier on port 8080. Can query the database on 3306.
+
+==================================================
+INBOUND RULES
+==================================================
+Type        Protocol  Port  Source          Description
+Custom TCP  TCP       8080  sg-web-tier     Application traffic from web tier only
+SSH         TCP       22    sg-bastion      Admin SSH from bastion only
+
+==================================================
+OUTBOUND RULES
+==================================================
+Type        Protocol  Port  Destination     Description
+MySQL       TCP       3306  sg-database     Database queries
+HTTPS       TCP       443   0.0.0.0/0       Outbound HTTPS (external APIs, package updates)
+
+==================================================
+NOTES
+==================================================
+- No inbound from 0.0.0.0/0 on any port — app tier is not internet-accessible
+- The app tier CANNOT be reached by SSH from anywhere except the bastion
+- The app tier CANNOT reach the DB on 3306 unless sg-database allows sg-app-tier as source
+- In production, this tier would typically run in a private subnet with no public IP

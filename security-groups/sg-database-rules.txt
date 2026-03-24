@@ -1,0 +1,24 @@
+Security Group: sg-database
+Description: Database tier. MySQL access is restricted to the app tier only. No public access of any kind.
+
+==================================================
+INBOUND RULES
+==================================================
+Type        Protocol  Port  Source          Description
+MySQL/Aurora TCP      3306  sg-app-tier     Database connections from app tier only
+SSH         TCP       22    sg-bastion      Admin SSH from bastion only
+
+==================================================
+OUTBOUND RULES
+==================================================
+Type        Protocol  Port  Destination     Description
+HTTPS       TCP       443   0.0.0.0/0       Outbound HTTPS (AWS APIs, OS updates)
+
+==================================================
+NOTES
+==================================================
+- Port 3306 is ONLY open to sg-app-tier — the web tier cannot reach this port
+- In production, outbound HTTPS could be further restricted to specific AWS service endpoints
+- The database instance should be in a private subnet with no internet gateway route
+- Consider using RDS with its own security group instead of self-managed MySQL
+- Backups and snapshots should use AWS Backup or RDS automated backups

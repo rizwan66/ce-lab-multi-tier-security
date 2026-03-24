@@ -1,0 +1,24 @@
+Security Group: sg-bastion
+Description: Controls SSH access to the bastion jump host. Only your IP can connect; bastion can reach all other tiers via SSH.
+
+==================================================
+INBOUND RULES
+==================================================
+Type        Protocol  Port  Source          Description
+SSH         TCP       22    YOUR_IP/32      Admin SSH from trusted IP only
+
+==================================================
+OUTBOUND RULES
+==================================================
+Type        Protocol  Port  Destination     Description
+SSH         TCP       22    sg-web-tier     SSH to web instances
+SSH         TCP       22    sg-app-tier     SSH to app instances
+SSH         TCP       22    sg-database     SSH to database instances
+
+==================================================
+NOTES
+==================================================
+- Replace YOUR_IP/32 with your actual public IP (run: curl ifconfig.me)
+- No other outbound traffic is needed from the bastion
+- The bastion itself should not serve any application traffic
+- Consider using EC2 Instance Connect or SSM Session Manager as a more auditable alternative
